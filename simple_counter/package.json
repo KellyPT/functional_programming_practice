@@ -5,7 +5,7 @@
   "scripts": {
     "start": "webpack-dev-server --open"
   },
-  "author": "James Moore",
+  "author": "Kelly Tran",
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.26.0",
