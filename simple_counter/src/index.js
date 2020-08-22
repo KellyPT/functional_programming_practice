@@ -1,5 +1,6 @@
-import h from 'hyperscript';
 import hh from 'hyperscript-helpers';
+import { h, diff, patch } from 'virtual-dom';
+import createElement from 'virtual-dom/create-element';
 
 const { div, button } = hh(h);
 
@@ -38,12 +39,14 @@ function update(msg, model) {
 function app(initModel, update, view, node) {
   let model = initModel;
   let currentView = view(dispatch, model);
-  node.appendChild(currentView);
+  let rootNode = createElement(currentView);
+  node.appendChild(rootNode);
   // dispatch is called when there's interaction with the app
   function dispatch(msg) {
     model = update(msg, model); // return the updated model
     const updatedView = view(dispatch, model); // hoisting happening here
-    node.replaceChild(updatedView, currentView);
+    const patches = diff(currentView, updatedView);
+    rootNode = patch(rootNode, patches);
     currentView = updatedView;
   }
 }
