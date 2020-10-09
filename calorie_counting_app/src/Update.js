@@ -3,7 +3,8 @@ import * as R from 'ramda';
 const MSGS = {
   SHOW_FORM: 'SHOW_FORM',
   MEAL_INPUT: 'MEAL_INPUT',
-  CALORIES_INPUT: 'CALORIES_INPUT'
+  CALORIES_INPUT: 'CALORIES_INPUT',
+  SAVE_MEAL: 'SAVE_MEAL'
 };
 
 export function showFormMsg(showForm) {
@@ -27,6 +28,8 @@ export function caloriesInputMsg(calories) {
   };
 }
 
+export const saveMealMsg = { type: MSGS.SAVE_MEAL };
+
 function update(msg, model) {
   switch (msg.type) {
     case MSGS.SHOW_FORM: {
@@ -41,8 +44,25 @@ function update(msg, model) {
       const calories = R.pipe(parseInt, R.defaultTo(0))(msg.calories);
       return { ...model, calories };
     }
+    case MSGS.SAVE_MEAL: {
+      return addMeal(msg, model);
+    }
   }
   return model;
+}
+
+function addMeal(msg, model) {
+  const { nextId, description, calories, meals } = model; // description and calories have been previously entered through mealInputMsg and caloriesInputMsg
+  const newMeal = { id: nextId, description, calories };
+  const updatedMeals = [...meals, newMeal];
+  return {
+    ...model,
+    meals: updatedMeals,
+    nextId: nextId + 1,
+    description: '',
+    calories: 0,
+    showForm: false
+  };
 }
 
 export default update;
